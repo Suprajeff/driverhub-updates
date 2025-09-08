@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
 
 data class UberCustomerEntity(
     @PrimaryKey val id: String,
-    val customerName: String?,
-    val restaurantName: String?,
-    val orderNumber: String?,
-    val address: String?,
+    val customerName: String,
+    val restaurantName: String,
+    val orderNumber: String,
+    val address: String,
     val timestamp: Long,
 )

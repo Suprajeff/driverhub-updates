@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey
 
 data class DeliverooCustomerEntity(
     @PrimaryKey val id: String,
-    val customerName: String?,
-    val customerAddress: String?,
+    val customerName: String,
+    val customerAddress: String,
     val latitude: Double?,
     val longitude: Double?,
     val distanceMeters: Int?,

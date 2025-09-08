@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UberCustomer(
     val id: String,
-    val customerName: String?,
-    val restaurantName: String?,
-    val orderNumber: String?,
-    val address: String?,
+    val customerName: String,
+    val restaurantName: String,
+    val orderNumber: String,
+    val address: String,
     val timestamp: Long
 )
 

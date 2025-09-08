@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeliverooCustomer(
     val id: String,
-    val customerName: String?,
-    val customerAddress: String?,
+    val customerName: String,
+    val customerAddress: String,
     val latitude: Double?,
     val longitude: Double?,
     val distanceMeters: Int?,

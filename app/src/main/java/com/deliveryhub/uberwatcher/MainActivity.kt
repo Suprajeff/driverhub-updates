@@ -49,6 +49,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.Instant
 import android.os.PowerManager
+import androidx.compose.foundation.lazy.items
+import com.deliveryhub.uberwatcher.db.di.DAOHolder
 
 
 class MainActivity : ComponentActivity() {
@@ -90,7 +92,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnableAccessibility: () -> Unit, onEnableBatteryOptimisation: () -> Unit, client: HttpClient, db: DAOHolder) {
 
-    val notifications by db.notificationDao.getNotifications()
+    val notifications by db.uberOrderDao.getUberOrders()
         .map { list ->
             list.sortedByDescending { it.timestamp } // newest first
                 .take(50)                            // only keep 50
@@ -202,9 +204,6 @@ fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnabl
         ) {
             items( notifications) { item ->
 
-                // Check classification
-                val type = DeliverooNotificationType.fromTitle(item.title)
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -216,76 +215,46 @@ fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnabl
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // App logo
-                        val logoRes = when (item.packageName) {
-                            PackageName.DELIVEROO -> R.drawable.deliveroo_circle
-                            PackageName.UBER -> R.drawable.uber_circle
-                        }
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Start
                         ){
 
-                        if (logoRes != 0) {
                             Image(
-                                painter = painterResource(id = logoRes),
+                                painter = painterResource(id = R.drawable.uber_circle),
                                 contentDescription = null,
                                 modifier = Modifier.size(50.dp).padding(end = 8.dp)
                             )
-                        }
 
                         // Notification text
                         Column {
 
                             Text(
-                                text = item.title,
+                                text = item.pickUp,
                                 style = Typography.titleSmall
                             )
 
-                            if (item.text.isNotEmpty() && item.text != "(no text)") {
 
-                                val isAddressType = type == DeliverooNotificationType.GO_TO_RESTAURANT ||
-                                        type == DeliverooNotificationType.GO_TO_CUSTOMER
+                            Text(
+                                text = item.dropOff,
+                                style = Typography.bodySmall,
+                                modifier = Modifier.clickable {
+                                    val gmmIntentUri =
+                                        "geo:0,0?q=${Uri.encode(item.dropOff)}".toUri()
+                                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+                                        setPackage("com.google.android.apps.maps")
+                                    }
+                                    context.startActivity(mapIntent)
+                                }.padding(vertical = 8.dp)
+                            )
 
-                                Text(
-                                    text = item.text,
-                                    style = Typography.bodySmall,
-                                    modifier = if (isAddressType) {
-                                        Modifier.clickable {
-                                            val gmmIntentUri =
-                                                "geo:0,0?q=${Uri.encode(item.text)}".toUri()
-                                            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
-                                                setPackage("com.google.android.apps.maps")
-                                            }
-                                            context.startActivity(mapIntent)
-                                        }.padding(vertical = 8.dp)
-                                    } else Modifier
-                                )
 
-                            }
+                            Text(
+                                text = "Price: ${item.price} for ${item.distanceInMiles} (${item.timeEstimation} minutes)",
+                                style = Typography.bodySmall
+                            )
 
-                            // Optional fields
-                            if (item.subText.isNotEmpty() && item.subText != "(no subtext)") {
-                                Text(
-                                    text = "SubText: ${item.subText}",
-                                    style = Typography.bodySmall
-                                )
-                            }
-
-                            if (item.summaryText.isNotEmpty() && item.summaryText != "(no summary)") {
-                                Text(
-                                    text = "Summary: ${item.summaryText}",
-                                    style = Typography.bodySmall
-                                )
-                            }
-
-                            if (item.category.isNotEmpty() && item.category != "(no category)") {
-                                Text(
-                                    text = "Category: ${item.category}",
-                                    style = Typography.bodySmall
-                                )
-                            }
 
                             Text(
                                 text = item.timestamp.let {
@@ -296,20 +265,6 @@ fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnabl
                                 } ?: "unknown",
                                 style = Typography.bodySmall
                             )
-
-                            if (item.isOngoing) {
-                                Text(
-                                    text = "Ongoing",
-                                    style = Typography.bodySmall
-                                )
-                            }
-
-                            if (!item.isClearable) {
-                                Text(
-                                    text = "Not Clearable",
-                                    style = Typography.bodySmall
-                                )
-                            }
 
                         }
                         }

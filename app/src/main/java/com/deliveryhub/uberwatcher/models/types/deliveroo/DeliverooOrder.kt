@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeliverooOrder(
     val id: String,
-    val price: String?,
-    val ordersCount: String?,
-    val restaurantName: String?,
-    val restaurantAddress: String?,
-    val customerAddress: String?,
+    val price: String,
+    val ordersCount: String,
+    val restaurantName: String,
+    val restaurantAddress: String,
+    val customerAddress: String,
     val latitude: Double?,
     val longitude: Double?,
     val extraStatus: List<String>,
