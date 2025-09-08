@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "857216879779",
+    "project_id": "links-38316",
+    "storage_bucket": "links-38316.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857216879779:android:b45c46a01c8aa8a4dd8316",
+        "android_client_info": {
+          "package_name": "com.deliveryhub.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJEACoTQxEmo8EsBIXrRWM4mdh6MSh7xE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857216879779:android:bbabeb976f82a97bdd8316",
+        "android_client_info": {
+          "package_name": "com.deliveryhub.uberwatcher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJEACoTQxEmo8EsBIXrRWM4mdh6MSh7xE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
