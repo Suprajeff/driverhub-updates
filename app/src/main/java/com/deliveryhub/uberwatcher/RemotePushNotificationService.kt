@@ -20,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
 import com.deliveryhub.uberwatcher.network.Result
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
 class RemotePushNotificationService: FirebaseMessagingService() {
 
@@ -38,9 +40,9 @@ class RemotePushNotificationService: FirebaseMessagingService() {
                 when (updateType) {
                     "new_uber_order" -> {
                         val lastTs = db.uberOrderDao.getLatestTimestamp() ?: 0L
-                        val response: Result<List<UberOrder>> = client.get("https://n.xn--ida.top/sync_uber_orders") {
-                            parameter("since", lastTs)
+                        val response: Result<List<UberOrder>> = client.post("https://n.xn--ida.top/sync_uber_orders") {
                             contentType(ContentType.Application.Json)
+                            setBody(mapOf("since" to lastTs))
                         }.body()
 
                         when (response) {
@@ -54,9 +56,9 @@ class RemotePushNotificationService: FirebaseMessagingService() {
 
                     "new_uber_customer" -> {
                         val lastTs = db.uberCustomerDao.getLatestTimestamp() ?: 0L
-                        val response: Result<List<UberCustomer>> = client.get("https://n.xn--ida.top/sync_uber_customers") {
-                            parameter("since", lastTs)
+                        val response: Result<List<UberCustomer>> = client.post("https://n.xn--ida.top/sync_uber_customers") {
                             contentType(ContentType.Application.Json)
+                            setBody(mapOf("since" to lastTs))
                         }.body()
 
                         when (response) {
@@ -71,9 +73,10 @@ class RemotePushNotificationService: FirebaseMessagingService() {
 
                     "new_deliveroo_order" -> {
                         val lastTs = db.deliverooOrderDao.getLatestTimestamp() ?: 0L
-                        val response: Result<List<DeliverooOrder>> = client.get("https://n.xn--ida.top/sync/sync_deliveroo_orders") {
-                            parameter("since", lastTs)
+                        val response: Result<List<DeliverooOrder>> = client.post("https://n.xn--ida.top/sync/sync_deliveroo_orders") {
+//                            parameter("since", lastTs)
                             contentType(ContentType.Application.Json)
+                            setBody(mapOf("since" to lastTs))
                         }.body()
 
                         when (response) {
@@ -88,9 +91,9 @@ class RemotePushNotificationService: FirebaseMessagingService() {
 
                     "new_deliveroo_customer" -> {
                         val lastTs = db.deliverooCustomerDao.getLatestTimestamp() ?: 0L
-                        val response: Result<List<DeliverooCustomer>> = client.get("https://n.xn--ida.top/sync/sync_deliveroo_customers") {
-                            parameter("since", lastTs)
+                        val response: Result<List<DeliverooCustomer>> = client.post("https://n.xn--ida.top/sync/sync_deliveroo_customers") {
                             contentType(ContentType.Application.Json)
+                            setBody(mapOf("since" to lastTs))
                         }.body()
 
                         when (response) {

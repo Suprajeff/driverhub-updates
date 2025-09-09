@@ -35,8 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.deliveryhub.uberwatcher.models.PackageName
-import com.deliveryhub.uberwatcher.models.types.deliveroo.DeliverooNotificationType
 import com.deliveryhub.uberwatcher.ui.theme.DriverTheme
 import com.deliveryhub.uberwatcher.ui.theme.Typography
 import io.ktor.client.HttpClient
@@ -50,7 +48,12 @@ import java.time.format.DateTimeFormatter
 import java.time.Instant
 import android.os.PowerManager
 import androidx.compose.foundation.lazy.items
+import com.deliveryhub.uberwatcher.composables.DeliverooOrderListing
+import com.deliveryhub.uberwatcher.composables.UberOrderListing
 import com.deliveryhub.uberwatcher.db.di.DAOHolder
+import com.deliveryhub.uberwatcher.db.models.asExternalModel
+import com.deliveryhub.uberwatcher.models.types.Order
+import kotlinx.coroutines.flow.combine
 
 
 class MainActivity : ComponentActivity() {
@@ -92,12 +95,31 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnableAccessibility: () -> Unit, onEnableBatteryOptimisation: () -> Unit, client: HttpClient, db: DAOHolder) {
 
-    val notifications by db.uberOrderDao.getUberOrders()
-        .map { list ->
-            list.sortedByDescending { it.timestamp } // newest first
-                .take(50)                            // only keep 50
-        }
-        .collectAsState(initial = emptyList())
+//    val uberOrders by db.uberOrderDao.getUberOrders()
+//        .map { list ->
+//            list.sortedByDescending { it.timestamp } // newest first
+//                .take(50)                            // only keep 50
+//        }
+//        .collectAsState(initial = emptyList())
+//
+//    val deliverooOrders by db.deliverooOrderDao.getDeliverooOrders()
+//        .map { list ->
+//            list.sortedByDescending { it.timestamp } // newest first
+//                .take(50)                            // only keep 50
+//        }
+//        .collectAsState(initial = emptyList())
+
+    val orders by combine(
+        db.uberOrderDao.getUberOrders(),
+        db.deliverooOrderDao.getDeliverooOrders()
+    ) { uberList, deliverooList ->
+        val mappedUber = uberList.map { Order.Uber(it.asExternalModel()) }
+        val mappedDeliveroo = deliverooList.map { Order.Deliveroo(it.asExternalModel()) }
+
+        (mappedUber + mappedDeliveroo)
+            .sortedByDescending { it.timestamp }
+            .take(50) // newest 50 across both
+    }.collectAsState(initial = emptyList())
 
     val context = LocalContext.current
 
@@ -202,96 +224,12 @@ fun MainScreen(modifier: Modifier = Modifier, onEnableClick: () -> Unit, onEnabl
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items( notifications) { item ->
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ){
-
-                            Image(
-                                painter = painterResource(id = R.drawable.uber_circle),
-                                contentDescription = null,
-                                modifier = Modifier.size(50.dp).padding(end = 8.dp)
-                            )
-
-                        // Notification text
-                        Column {
-
-                            Text(
-                                text = item.pickUp,
-                                style = Typography.titleSmall
-                            )
-
-
-                            Text(
-                                text = item.dropOff,
-                                style = Typography.bodySmall,
-                                modifier = Modifier.clickable {
-                                    val gmmIntentUri =
-                                        "geo:0,0?q=${Uri.encode(item.dropOff)}".toUri()
-                                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
-                                        setPackage("com.google.android.apps.maps")
-                                    }
-                                    context.startActivity(mapIntent)
-                                }.padding(vertical = 8.dp)
-                            )
-
-
-                            Text(
-                                text = "Price: ${item.price} for ${item.distanceInMiles} (${item.timeEstimation} minutes)",
-                                style = Typography.bodySmall
-                            )
-
-
-                            Text(
-                                text = item.timestamp.let {
-                                    DateTimeFormatter
-                                        .ofPattern("EEE, dd MMM yy HH:mm")
-                                        .withZone(ZoneId.systemDefault())
-                                        .format(Instant.ofEpochMilli(it))
-                                } ?: "unknown",
-                                style = Typography.bodySmall
-                            )
-
-                        }
-                        }
-
-                        // Delete cross
-                        IconButton(onClick = {
-                            // Call your delete function here
-                            CoroutineScope(Dispatchers.IO).launch {
-
-                                try {
-                                    db.notificationDao.delete(item.id)
-                                } catch (e: Exception) {
-                                    Log.e("CourierHelper", "Error inserting notification to DB", e)
-                                }
-
-                            }
-
-
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Delete Notification"
-                            )
-                        }
-
-                    }
+            items( orders) { order ->
+                when (order) {
+                    is Order.Uber -> UberOrderListing(order.order, context)        // your composable
+                    is Order.Deliveroo -> DeliverooOrderListing(order.order, context)
                 }
+
             }
         }
     }

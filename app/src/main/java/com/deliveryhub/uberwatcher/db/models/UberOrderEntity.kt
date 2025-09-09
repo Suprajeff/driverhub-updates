@@ -2,6 +2,7 @@ package com.deliveryhub.uberwatcher.db.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.deliveryhub.uberwatcher.models.types.uber.UberOrder
 
 @Entity(
     tableName = "uberOrders",
@@ -17,4 +18,16 @@ data class UberOrderEntity(
     val dropOff: String, // "5 Hendon Avenue, London, N3 1UL"
     val extraStatus: List<String>, // e.g. ["Confirm_"]
     val timestamp: Long
+)
+
+fun UberOrderEntity.asExternalModel() = UberOrder(
+    id = id,
+    type = type,
+    price = price,
+    timeEstimation = timeEstimation,
+    distanceInMiles = distanceInMiles,
+    pickUp = pickUp,
+    dropOff = dropOff,
+    extraStatus = extraStatus,
+    timestamp = timestamp
 )

@@ -1,8 +1,12 @@
 package com.deliveryhub.uberwatcher.network
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.json.JsonClassDiscriminator
 
+@OptIn(ExperimentalSerializationApi::class)
+@JsonClassDiscriminator("status") // 👈 use "status" field as discriminator
 @Serializable
 sealed class Result<out T> {
     @Serializable
