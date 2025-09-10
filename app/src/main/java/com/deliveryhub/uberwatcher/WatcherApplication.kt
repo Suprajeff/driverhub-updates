@@ -32,6 +32,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 import kotlinx.serialization.json.Json
@@ -107,76 +108,73 @@ class WatcherApplication : Application() {
                 val db = (applicationContext as WatcherApplication).daoHolders
                 val client = (applicationContext as WatcherApplication).httpClient
 
-                db.uberCustomerDao.getUberCustomers().collect { customers ->
-                    if (customers.isEmpty()) {
+                val deliverooOrders = db.deliverooOrderDao.getDeliverooOrders().first()
+                val deliverooCustomers = db.deliverooCustomerDao.getDeliverooCustomers().first()
+                val uberOrders = db.uberOrderDao.getUberOrders().first()
+                val uberCustomers = db.uberCustomerDao.getUberCustomers().first()
 
-                        val response: Result<List<UberCustomer>> = client.get("https://n.xn--ida.top/get_uber_customers") {
-                            contentType(ContentType.Application.Json)
-                        }.body()
+                if (deliverooOrders.isEmpty()) {
 
-                        when (response) {
-                            is Result.Success -> {
-                                response.data.forEach { db.uberCustomerDao.insert(it.asEntity()) }
-                            }
-                            is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
-                            is Result.NotFound -> Log.d("FCM", "No new Uber customers")
+                    val response: Result<List<DeliverooOrder>> = client.get("https://n.xn--ida.top/get_deliveroo_orders") {
+                        contentType(ContentType.Application.Json)
+                    }.body()
+
+                    when (response) {
+                        is Result.Success -> {
+                            response.data.forEach { db.deliverooOrderDao.insert(it.asEntity()) }
                         }
-
+                        is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
+                        is Result.NotFound -> Log.d("FCM", "No new Deliveroo orders")
                     }
+
                 }
 
-                db.deliverooCustomerDao.getDeliverooCustomers().collect { customers ->
-                    if (customers.isEmpty()) {
+                if (deliverooCustomers.isEmpty()) {
 
-                        val response: Result<List<DeliverooCustomer>> = client.get("https://n.xn--ida.top/get_deliveroo_customers") {
-                            contentType(ContentType.Application.Json)
-                        }.body()
+                    val response: Result<List<DeliverooCustomer>> = client.get("https://n.xn--ida.top/get_deliveroo_customers") {
+                        contentType(ContentType.Application.Json)
+                    }.body()
 
-                        when (response) {
-                            is Result.Success -> {
-                                response.data.forEach { db.deliverooCustomerDao.insert(it.asEntity()) }
-                            }
-                            is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
-                            is Result.NotFound -> Log.d("FCM", "No new Deliveroo customers")
+                    when (response) {
+                        is Result.Success -> {
+                            response.data.forEach { db.deliverooCustomerDao.insert(it.asEntity()) }
                         }
-
+                        is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
+                        is Result.NotFound -> Log.d("FCM", "No new Deliveroo customers")
                     }
+
                 }
 
-                db.deliverooOrderDao.getDeliverooOrders().collect { orders ->
-                    if (orders.isEmpty()) {
+                if (uberOrders.isEmpty()) {
 
-                        val response: Result<List<DeliverooOrder>> = client.get("https://n.xn--ida.top/get_deliveroo_orders") {
-                            contentType(ContentType.Application.Json)
-                        }.body()
+                    val response: Result<List<UberOrder>> = client.get("https://n.xn--ida.top/get_uber_orders") {
+                        contentType(ContentType.Application.Json)
+                    }.body()
 
-                        when (response) {
-                            is Result.Success -> {
-                                response.data.forEach { db.deliverooOrderDao.insert(it.asEntity()) }
-                            }
-                            is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
-                            is Result.NotFound -> Log.d("FCM", "No new Deliveroo orders")
+                    when (response) {
+                        is Result.Success -> {
+                            response.data.forEach { db.uberOrderDao.insert(it.asEntity()) }
                         }
-
+                        is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
+                        is Result.NotFound -> Log.d("FCM", "No new Uber orders")
                     }
+
                 }
 
-                db.uberOrderDao.getUberOrders().collect { orders ->
-                    if (orders.isEmpty()) {
+                if (uberCustomers.isEmpty()) {
 
-                        val response: Result<List<UberOrder>> = client.get("https://n.xn--ida.top/get_uber_orders") {
-                            contentType(ContentType.Application.Json)
-                        }.body()
+                    val response: Result<List<UberCustomer>> = client.get("https://n.xn--ida.top/get_uber_customers") {
+                        contentType(ContentType.Application.Json)
+                    }.body()
 
-                        when (response) {
-                            is Result.Success -> {
-                                response.data.forEach { db.uberOrderDao.insert(it.asEntity()) }
-                            }
-                            is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
-                            is Result.NotFound -> Log.d("FCM", "No new Uber orders")
+                    when (response) {
+                        is Result.Success -> {
+                            response.data.forEach { db.uberCustomerDao.insert(it.asEntity()) }
                         }
-
+                        is Result.Error -> Log.e("FCM", "Server error: ${response.message}")
+                        is Result.NotFound -> Log.d("FCM", "No new Uber customers")
                     }
+
                 }
 
                 Log.d("App", "Sync success")

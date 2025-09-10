@@ -56,10 +56,23 @@ fun DeliverooCustomerListing(
 
                 Column {
 
-                    Text(
-                        text = item.customerName,
-                        style = Typography.titleSmall
-                    )
+                    item.lastTwo?.length?.let {
+                        if(it > 1) {
+
+                            Text(
+                                text = "${item.customerName} (${item.lastTwo})",
+                                style = Typography.titleSmall
+                            )
+
+                        } else {
+
+                            Text(
+                                text = item.customerName,
+                                style = Typography.titleSmall
+                            )
+
+                        }
+                    }
 
 
                     Text(

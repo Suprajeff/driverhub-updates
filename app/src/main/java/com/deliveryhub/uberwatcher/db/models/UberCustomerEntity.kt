@@ -11,6 +11,8 @@ import com.deliveryhub.uberwatcher.models.types.uber.UberCustomer
 data class UberCustomerEntity(
     @PrimaryKey val id: String,
     val customerName: String,
+    val dob: String?,
+    val lastFour: String?,
     val restaurantName: String,
     val orderNumber: String,
     val address: String,
@@ -20,6 +22,8 @@ data class UberCustomerEntity(
 fun UberCustomerEntity.asExternalModel() = UberCustomer(
     id = id,
     customerName = customerName,
+    dob = dob,
+    lastFour = lastFour,
     restaurantName = restaurantName,
     orderNumber = orderNumber,
     address = address,

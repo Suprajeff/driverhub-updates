@@ -8,7 +8,9 @@ import kotlinx.serialization.Serializable
 data class UberCustomer(
     @SerialName("_id") val id: String,
     @SerialName("_customerName") val customerName: String,
-    @SerialName("_restaurantName") val restaurantName: String,
+    @SerialName("_dob") val dob: String?,
+    @SerialName("_lastFour") val lastFour: String?,
+    @SerialName("_restaurantName") val restaurantName: String = "",
     @SerialName("_orderNumber") val orderNumber: String,
     @SerialName("_address") val address: String,
     @SerialName("_timestamp") val timestamp: Long
@@ -17,6 +19,8 @@ data class UberCustomer(
 fun UberCustomer.asEntity() = UberCustomerEntity(
     id = id,
     customerName = customerName,
+    dob = dob,
+    lastFour = lastFour,
     restaurantName = restaurantName,
     orderNumber = orderNumber,
     address = address,

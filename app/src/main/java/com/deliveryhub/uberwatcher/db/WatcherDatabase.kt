@@ -24,7 +24,7 @@ import com.deliveryhub.uberwatcher.db.utils.StringListConverter
         UberOrderEntity::class,
         UberCustomerEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(
