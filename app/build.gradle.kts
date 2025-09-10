@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,5 +83,19 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(libs.firebase.messaging.ktx)
+
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.runtime.android)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+
+    api(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.coil.kt.compose)
+    implementation(libs.androidx.graphics.shapes)
+    implementation(libs.androidx.core.splashscreen)
 
 }

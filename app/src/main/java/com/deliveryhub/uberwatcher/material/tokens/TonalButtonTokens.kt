@@ -1,0 +1,42 @@
+package com.deliveryhub.uberwatcher.material.tokens
+
+internal object TonalButtonTokens {
+    val ContainerColor = ColorSchemeKeyTokens.SecondaryContainer
+    val ContainerElevation = ElevationTokens.Level0
+    val DisabledContainerColor = ColorSchemeKeyTokens.OnSurface
+    val DisabledContainerElevation = ElevationTokens.Level0
+    val DisabledContainerOpacity = 0.1f
+    val DisabledIconColor = ColorSchemeKeyTokens.OnSurfaceVariant
+    val DisabledIconOpacity = 0.38f
+    val DisabledLabelTextColor = ColorSchemeKeyTokens.OnSurfaceVariant
+    val DisabledLabelTextOpacity = 0.38f
+    val FocusedContainerElevation = ElevationTokens.Level0
+    val FocusedIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val FocusedLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val HoveredContainerElevation = ElevationTokens.Level1
+    val HoveredIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val HoveredLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val IconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val LabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val PressedContainerElevation = ElevationTokens.Level0
+    val PressedIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val PressedLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val SelectedContainerColor = ColorSchemeKeyTokens.Secondary
+    val SelectedFocusedIconColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedFocusedLabelTextColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedHoveredIconColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedHoveredLabelTextColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedIconColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedLabelTextColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedPressedIconColor = ColorSchemeKeyTokens.OnSecondary
+    val SelectedPressedLabelTextColor = ColorSchemeKeyTokens.OnSecondary
+    val UnselectedContainerColor = ColorSchemeKeyTokens.SecondaryContainer
+    val UnselectedFocusedIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedFocusedLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedHoveredIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedHoveredLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedPressedIconColor = ColorSchemeKeyTokens.OnSecondaryContainer
+    val UnselectedPressedLabelTextColor = ColorSchemeKeyTokens.OnSecondaryContainer
+}

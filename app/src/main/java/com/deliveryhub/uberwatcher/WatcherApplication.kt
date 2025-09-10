@@ -2,6 +2,9 @@ package com.deliveryhub.uberwatcher
 
 import android.app.Application
 import android.util.Log
+import com.deliveryhub.uberwatcher.common.CoroutineScopesModule
+import com.deliveryhub.uberwatcher.common.DispatchersProvider
+import com.deliveryhub.uberwatcher.data.di.DataModule
 import com.deliveryhub.uberwatcher.db.di.DAOHolder
 import com.deliveryhub.uberwatcher.db.di.DatabaseModule
 import com.deliveryhub.uberwatcher.models.types.deliveroo.DeliverooCustomer
@@ -22,24 +25,29 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 import kotlinx.serialization.json.Json
 
-class WatcherApp : Application() {
+class WatcherApplication : Application() {
     lateinit var httpClient: HttpClient
         private set
 
     lateinit var daoHolders: DAOHolder
         private set
 
+    lateinit var ioDispatcher: CoroutineDispatcher
+        private set
+
+    lateinit var dataModule: DataModule
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -67,11 +75,21 @@ class WatcherApp : Application() {
 
         }
 
+        ioDispatcher = DispatchersProvider.provideIODispatcher()
+        val scope = CoroutineScopesModule.providesCoroutineScope(ioDispatcher)
+
         // Database
 
         // --- Room Database ---
         val dbModule = DatabaseModule.getInstance(applicationContext)
         daoHolders = dbModule.getDAOs()
+
+        // Data Module
+        dataModule = DataModule.initialize(
+            this@WatcherApplication,
+            ioDispatcher,
+            daoHolders
+        )
 
         // Notifications
         FirebaseMessaging.getInstance().subscribeToTopic("updates")
@@ -86,8 +104,8 @@ class WatcherApp : Application() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val db = (applicationContext as WatcherApp).daoHolders
-                val client = (applicationContext as WatcherApp).httpClient
+                val db = (applicationContext as WatcherApplication).daoHolders
+                val client = (applicationContext as WatcherApplication).httpClient
 
                 db.uberCustomerDao.getUberCustomers().collect { customers ->
                     if (customers.isEmpty()) {

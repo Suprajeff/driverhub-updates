@@ -11,8 +11,6 @@ import com.deliveryhub.uberwatcher.models.types.uber.asEntity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +31,8 @@ class RemotePushNotificationService: FirebaseMessagingService() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val db = (applicationContext as WatcherApp).daoHolders
-                val client = (applicationContext as WatcherApp).httpClient
+                val db = (applicationContext as WatcherApplication).daoHolders
+                val client = (applicationContext as WatcherApplication).httpClient
 
                 // 1️⃣ Decide which DAO and which last timestamp to use
                 when (updateType) {
@@ -126,7 +124,7 @@ class RemotePushNotificationService: FirebaseMessagingService() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val client = (applicationContext as WatcherApp).httpClient
+                val client = (applicationContext as WatcherApplication).httpClient
 //                val response = client.post("https://n.xn--ida.top/register_new_token") {
 //                    contentType(ContentType.Application.Json)
 //                    setBody(token)
